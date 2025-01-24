@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Recipe - Culinary Canvas</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="add-recipe">
+        <nav class="nav">
+            <div class="logo">Culinary Canvas</div>
+            <div class="nav-links">
+                <a href="mainboard.html">Dashboard</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </nav>
+        <form id="addRecipeForm">
+            <h2>Add New Recipe</h2>
+            <div class="input-group">
+                <label for="recipeName">Recipe Name</label>
+                <input type="text" id="recipeName" required>
+            </div>
+            <div class="input-group">
+                <label for="recipeDescription">Description</label>
+                <textarea id="recipeDescription" required></textarea>
+            </div>
+            <div class="input-group">
+                <label for="recipeIngredients">Ingredients</label>
+                <textarea id="recipeIngredients" required></textarea>
+            </div>
+            <div class="input-group">
+                <label for="recipeInstructions">Instructions</label>
+                <textarea id="recipeInstructions" required></textarea>
+            </div>
+            <div class="input-group">
+                <label for="recipeImage">Image URL</label>
+                <input type="text" id="recipeImage" placeholder="Enter image URL">
+            </div>
+            <div class="input-group">
+                <label for="recipeVideo">Video URL (Optional)</label>
+                <input type="text" id="recipeVideo" placeholder="Enter YouTube or other video URL">
+            </div>
+            <button type="submit" class="cta-button">Add Recipe</button>
+        </form>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmYXy4OGpK_BwJ_26f4W4azKDZDICWR3w",
+    authDomain: "emaillogin-d9312.firebaseapp.com",
+    projectId: "emaillogin-d9312",
+    storageBucket: "emaillogin-d9312.firebasestorage.app",
+    messagingSenderId: "490730052655",
+    appId: "1:490730052655:web:5533571f2948710781bada",
+    measurementId: "G-TE5EVPJVM6"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Check Authentication State
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+            }
+        });
+
+        document.getElementById('addRecipeForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const user = auth.currentUser;
+
+            const recipe = {
+                name: document.getElementById('recipeName').value,
+                description: document.getElementById('recipeDescription').value,
+                ingredients: document.getElementById('recipeIngredients').value,
+                instructions: document.getElementById('recipeInstructions').value,
+                image: document.getElementById('recipeImage').value || '/api/placeholder/300/200',
+                video: document.getElementById('recipeVideo').value || '',
+                user: {
+                    email: user.email,
+                    uid: user.uid
+                },
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Add recipe to Firestore
+            db.collection('recipes').add(recipe)
+                .then(() => {
+                    Swal.fire({
+                        title: "Recipe Added!",
+                        text: "Your recipe has been successfully added.",
+                        icon: "success",
+                        confirmButtonColor: "#ff6b6b"
+                    }).then(() => {
+                        window.location.href = 'mainboard.html';
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        title: "Error",
+                        text: "Failed to add recipe: " + error.message,
+                        icon: "error",
+                        confirmButtonColor: "#ff6b6b"
+                    });
+                });
+        });
+
+        function logout() {
+            auth.signOut().then(() => {
+                Swal.fire({
+                    title: "Logged Out",
+                    text: "You have successfully logged out.",
+                    icon: "info",
+                    confirmButtonColor: "#ff6b6b"
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
