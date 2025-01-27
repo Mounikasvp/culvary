@@ -70,6 +70,7 @@
                     return db.collection('users').doc(user.uid).set({
                         name: name,
                         email: email,
+                        password:password,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }) .then(() => {

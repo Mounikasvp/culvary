@@ -24,21 +24,28 @@ a:hover {
     min-height: 100vh;
     background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
     color: white;
-    display: flex;
+    /* display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
 }
 
 .hero {
     background: url('/api/placeholder/1920/1080') center/cover;
     position: relative;
     text-align: center;
-    padding: 20px;
+    padding: 50px;
 }
-
+.logo{
+    color: black;
+}
 .hero-content {
-    position: relative;
-    z-index: 1;
+   display: flex;
+   flex-wrap: wrap;
+   flex-direction: column;
+   align-content: center;
+   /* justify-content: center; */
+   /* flex-direction: column; */
+   gap:40px;
 }
 
 .hero h1 {
@@ -54,6 +61,7 @@ a:hover {
     border-radius: 30px;
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
+    width: 200px;
 }
 
 .cta-button:hover {
